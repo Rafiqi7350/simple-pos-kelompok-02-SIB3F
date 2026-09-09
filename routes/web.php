@@ -6,6 +6,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
+Route::redirect('/', '/dashboard');
+
 Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
 // Kasir POS (increment 2: routing & controller)
