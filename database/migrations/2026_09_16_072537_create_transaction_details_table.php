@@ -10,22 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('transaction_details', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('transaction_id')->constrained();
-        $table->foreignId('product_id')->constrained();
-        $table->unsignedInteger('qty');
-        $table->unsignedInteger('subtotal');
-        $table->timestamps();
-        });
-    }
+{
+    Schema::table('transaction_details', function (Blueprint $table) {
+        $table->index('product_id'); // <-- Tambahkan baris ini
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('transaction_details');
-    }
+public function down(): void
+{
+    Schema::table('transaction_details', function (Blueprint $table) {
+        $table->dropIndex(['product_id']); // <-- Tambahkan baris ini
+    });
+}
 };
