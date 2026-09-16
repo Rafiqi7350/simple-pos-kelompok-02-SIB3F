@@ -21,7 +21,7 @@ class TransactionController extends Controller
 
     public function index()
     {
-        return 'Daftar transaksi';
+        return view('transactions.index');
     }
 
     public function show(string $id)
