@@ -10,11 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('transaction_details', function (Blueprint $table) {
-        $table->index('product_id'); // <-- Tambahkan baris ini
-    });
-}
+    {
+        Schema::create('transaction_details', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('transaction_id')->constrained();
+            $table->foreignId('product_id')->constrained();
+            $table->unsignedInteger('qty');
+            $table->unsignedInteger('subtotal');
+            $table->timestamps();
+        });
+    }
 
 public function down(): void
 {
