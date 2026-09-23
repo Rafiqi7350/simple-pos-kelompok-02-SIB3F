@@ -6,20 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->index('product_id');
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->index('created_at');
         });
     }
 
     public function down(): void
     {
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->dropIndex(['product_id']);
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropIndex(['created_at']);
         });
     }
 };

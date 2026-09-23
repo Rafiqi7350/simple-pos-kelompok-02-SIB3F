@@ -9,7 +9,7 @@ class TransactionController extends Controller
 {
     public function create()
     {
-        $products = Product::take(12)->get();
+        $products = Product::where('stock', '>', 0)->get();
 
         return view('pos.create', compact('products'));
     }
@@ -21,7 +21,7 @@ class TransactionController extends Controller
 
     public function index()
     {
-        return 'Daftar transaksi';
+        return view('transactions.index');
     }
 
     public function show(string $id)

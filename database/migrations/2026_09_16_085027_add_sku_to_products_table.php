@@ -11,15 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->index('product_id');
+        Schema::table('products', function (Blueprint $table) {
+            $table->string('sku')->unique()->nullable()->after('name');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->dropIndex(['product_id']);
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropUnique(['sku']);
+            $table->dropColumn('sku');
         });
     }
 };
