@@ -2,6 +2,7 @@
 @section('title', 'Kasir')
 @section('content')
     <h1 class="text-lg font-semibold mb-4">Transaksi Kasir</h1>
+
     <div x-data="{
             cart: [],
             activeId: null,
@@ -16,6 +17,7 @@
                 return this.cart.reduce((sum, item) => sum + item.price, 0);
             }
         }">
+
         <div class="grid grid-cols-3 gap-4">
             @foreach ($products as $product)
 
@@ -42,6 +44,11 @@
             @endforeach
         </div>
 
+        {{-- Pagination produk --}}
+        <div class="mt-6">
+            {{ $products->links() }}
+        </div>
+
         <div class="mt-4 border-t pt-3">
             <template x-for="item in cart" :key="item.id">
                 <div class="flex items-center justify-between py-1">
@@ -50,7 +57,11 @@
                         class="text-red-500 text-sm font-medium hover:underline">Hapus</button>
                 </div>
             </template>
-            <p class="font-semibold mt-2">Subtotal: Rp <span x-text="subtotal()"></span></p>
+
+            <p class="font-semibold mt-2">
+                Subtotal: Rp <span x-text="subtotal()"></span>
+            </p>
         </div>
+
     </div>
 @endsection
