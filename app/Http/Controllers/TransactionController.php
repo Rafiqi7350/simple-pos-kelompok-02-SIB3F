@@ -22,8 +22,7 @@ class TransactionController extends Controller
 
     public function index()
     {
-        // Ambil data transaksi terbaru dengan eager loading details dan product
-        $transactions = Transaction::with('details.product')
+        $transactions = Transaction::with('details.product', 'user')
             ->latest()
             ->paginate(15);
 
