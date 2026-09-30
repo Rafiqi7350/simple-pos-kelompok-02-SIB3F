@@ -22,7 +22,6 @@ class StoreTransactionRequest extends FormRequest
                 'integer',
                 'min:1',
                 function ($attribute, $value, $fail) {
-                    // Mengambil index dari atribut details
                     preg_match('/details\.(\d+)\.qty/', $attribute, $matches);
                     $index = $matches[1] ?? null;
 
