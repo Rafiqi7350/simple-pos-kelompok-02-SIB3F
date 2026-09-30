@@ -6,17 +6,22 @@
 
 <h1 class="text-lg font-semibold mb-4">Transaksi Kasir</h1>
 
+{{-- Flash message sukses --}}
 @if (session('success'))
     <div class="bg-green-50 text-green-700 p-3 rounded-md mb-4">
         {{ session('success') }}
     </div>
 @endif
 
-@error('items')
+@if ($errors->any())
     <div class="bg-red-50 text-red-700 p-3 rounded-md mb-4">
-        {{ $message }}
+        <ul class="list-disc list-inside text-sm">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
-@enderror
+@endif
 
 <form
     method="POST"
@@ -62,6 +67,7 @@
                 <p class="text-sm text-slate-500">
                     Rp {{ number_format($product->price) }}
                 </p>
+                <p class="text-xs text-slate-400 mt-1">Stok: {{ $product->stock }}</p>
             </div>
         @endforeach
     </div>
