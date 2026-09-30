@@ -25,15 +25,22 @@
         cart: [],
 
         addToCart(id, name, price) {
+        const existingItem = this.cart.find(item => item.id === id);
+
+        if (existingItem) {
+            existingItem.qty++;
+        } else {
             this.cart.push({
-                id,
-                name,
-                price
+                id: id,
+                name: name,
+                price: price,
+                qty: 1
             });
-        },
+        }
+    },
         subtotal() {
             return this.cart.reduce(
-                (sum, item) => sum + item.price,
+                (sum, item) => sum + (item.price * item.qty),
                 0
             );
         }
@@ -64,8 +71,8 @@
             :key="index">
             <div>
                 <p
-                    x-text="item.name + ' - Rp ' + item.price"
-                ></p>
+                    x-text="item.name + ' - Rp ' + item.price + ' x ' + item.qty">
+                </p>
                 <input
                     type="hidden"
                     :name="'items[' + index + '][product_id]'"
@@ -73,7 +80,7 @@
                 <input
                     type="hidden"
                     :name="'items[' + index + '][qty]'"
-                    value="1">
+                    :value="item.qty">
             </div>
         </template>
         <p class="font-semibold mt-2">
