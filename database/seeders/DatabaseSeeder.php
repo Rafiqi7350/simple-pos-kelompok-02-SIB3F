@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(DemoUserSeeder::class);
+
         $user = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -28,7 +30,6 @@ class DatabaseSeeder extends Seeder
                     'name' => fake()->words(2, true),
                     'price' => fake()->numberBetween(3000, 50000),
                     'stock' => fake()->numberBetween(0, 200),
-                    'is_active' => fake()->boolean(90),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
