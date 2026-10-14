@@ -13,6 +13,12 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/info', function () {
+        return view('info');
+    })->name('info');
+    Route::get('/informasi', function () {
+        return view('info');
+    })->name('informasi');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])
