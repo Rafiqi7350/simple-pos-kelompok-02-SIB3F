@@ -57,10 +57,10 @@
             <p class="text-2xl font-bold text-green-900">{{ number_format($jumlahTransaksi ?? 0) }}</p>
         </div>
     </div>
-    <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm">Filter</button>
-    <a href="{{ route('reports.export.csv', ['from' => $from, 'to' => $to]) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm">Export CSV</a>
-    <a href="{{ route('reports.export.xlsx', ['from' => $from, 'to' => $to]) }}" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm">Export Excel</a>
-    <a href="{{ route('reports.export.pdf', ['from' => $from, 'to' => $to]) }}" class="bg-red-600 text-white px-4 py-2 rounded-md text-sm">Export PDF</a>
-</form>
+    <div class="flex flex-wrap gap-2 mb-6">
+        <a href="{{ route('reports.export.csv', ['from' => $from, 'to' => $to, 'category_id' => $categoryId]) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none;">Export CSV</a>
+        <a href="{{ route('reports.export.xlsx', ['from' => $from, 'to' => $to, 'category_id' => $categoryId]) }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm transition" style="display: inline-block; background-color: #16a34a; color: #ffffff; text-decoration: none;">Export Excel</a>
+        <a href="{{ route('reports.export.pdf', ['from' => $from, 'to' => $to, 'category_id' => $categoryId]) }}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm transition" style="display: inline-block; background-color: #dc2626; color: #ffffff; text-decoration: none;">Export PDF</a>
+    </div>
 
 @endsection
