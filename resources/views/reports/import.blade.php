@@ -42,4 +42,29 @@
             Import
         </button>
     </form>
+
+    @if ($importErrors->isNotEmpty())
+        <div class="mt-8 max-w-2xl">
+            <h2 class="text-sm font-semibold text-red-600 mb-3">Daftar Baris yang Gagal Di-import:</h2>
+            <div class="bg-white border border-red-200 rounded-md overflow-hidden">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-red-50 border-b border-red-200">
+                        <tr>
+                            <th class="px-4 py-2 text-red-800">Baris ke-</th>
+                            <th class="px-4 py-2 text-red-800">Pesan Error</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-red-100">
+                        @foreach ($importErrors as $err)
+                            <tr>
+                                <td class="px-4 py-2 font-medium text-red-600">{{ $err->row_number }}</td>
+                                <td class="px-4 py-2 text-slate-600">{{ $err->error_message }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">*Refresh halaman ini beberapa detik setelah melakukan import untuk melihat riwayat error terbaru.</p>
+        </div>
+    @endif
 @endsection
