@@ -57,3 +57,15 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+## Analisis Proses Queued Job Tambahan
+
+Selain proses *Import Produk*, kelompok kami mengidentifikasi satu proses lain di **Simple POS** yang sangat layak dipindahkan ke *queued job*, yaitu:
+
+* **Proses:** **Export Laporan Penjualan ke Excel / PDF Skala Besar**
+* **Alasan:** 
+  1. **Menghindari Timeout Server:** Export data transaksi harian/tahunan yang mencapai puluhan ribu baris memerlukan waktu *rendering* dan *query* database yang lama, yang rentan memicu error *Maximum Execution Time Exceeded* (Timeout).
+  2. **Meningkatkan User Experience (UX):** Pengguna tidak perlu menatap layar *loading* yang lama di browser. Sistem dapat langsung merespons "Permintaan export sedang diproses" dan menghasilkan file di latar belakang.
+  3. **Efisiensi Memori:** Mencegah lonjakan penggunaan memori secara mendadak pada server web utama saat banyak admin yang melakukan export laporan secara bersamaan.
