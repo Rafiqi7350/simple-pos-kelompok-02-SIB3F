@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category; 
+use App\Imports\ProductsImport;
 use App\Exports\SalesReportExport;
 use App\Jobs\ProcessProductImport;
 use App\Models\Transaction;
@@ -126,5 +127,15 @@ class ReportController extends Controller
         }
 
         return $query;
+    }
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt,xlsx', 'max:5120'],
+        ]);
+
+        Excel::import(new ProductsImport, $request->file('file'));
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diimpor menggunakan Laravel Excel.');
     }
 }

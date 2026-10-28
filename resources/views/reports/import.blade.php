@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Import Produk')
@@ -14,19 +13,12 @@
         </div>
     @endif
 
-    <form method="POST"
-          action="{{ route('import.store') }}"
-          enctype="multipart/form-data"
-          class="max-w-md">
+    <form method="POST" action="{{ route('import.store') }}" enctype="multipart/form-data" class="max-w-md">
         @csrf
 
         <label class="block mb-3">
             <span class="text-sm font-medium">File CSV</span>
-            <input type="file"
-                   name="csv"
-                   accept=".csv"
-                   required
-                   class="mt-1 block w-full text-sm">
+            <input type="file" name="csv" accept=".csv" required class="mt-1 block w-full text-sm">
 
             @error('csv')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -37,8 +29,7 @@
             Kolom wajib: name, category_id, price.
         </p>
 
-        <button type="submit"
-                class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm">
+        <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm">
             Import
         </button>
     </form>
@@ -64,7 +55,30 @@
                     </tbody>
                 </table>
             </div>
-            <p class="text-xs text-slate-500 mt-2">*Refresh halaman ini beberapa detik setelah melakukan import untuk melihat riwayat error terbaru.</p>
+            <p class="text-xs text-slate-500 mt-2">*Refresh halaman ini beberapa detik setelah melakukan import untuk melihat
+                riwayat error terbaru.</p>
         </div>
     @endif
+
+    <div class="mt-8 pt-6 border-t border-slate-200">
+        <h2 class="text-md font-semibold text-slate-800 mb-1">Versi Laravel Excel</h2>
+        <p class="text-xs text-slate-500 mb-4">Menggunakan antarmuka ToModel, WithHeadingRow, dan WithChunkReading (.csv /
+            .xlsx).</p>
+
+        <form method="POST" action="{{ route('reports.import.excel') }}" enctype="multipart/form-data"
+            class="max-w-md space-y-4">
+            @csrf
+            <div>
+                <input type="file" name="file" required accept=".csv,.xlsx"
+                    class="block w-full text-sm text-slate-500 border border-slate-300 rounded-md p-2">
+                @error('file')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <button type="submit"
+                class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">
+                Impor via Laravel Excel
+            </button>
+        </form>
+    </div>
 @endsection
