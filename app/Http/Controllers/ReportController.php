@@ -7,12 +7,14 @@ use App\Imports\ProductsImport;
 use App\Exports\SalesReportExport;
 use App\Jobs\ProcessProductImport;
 use App\Models\Transaction;
+use App\Models\TransactionDetail;
 use App\Models\ImportError;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -76,10 +78,32 @@ class ReportController extends Controller
         
         $filteredQuery = $this->filteredQuery($from, $to, $categoryId);
 
+        $bestSellingProducts = TransactionDetail::query()
+            ->select(
+                'product_id',
+                DB::raw('SUM(qty) as total_qty'),
+                DB::raw('SUM(subtotal) as total_revenue')
+            )
+            ->whereHas('transaction', function ($q) use ($from, $to) {
+                $q->whereBetween('created_at', [$from, $to]);
+            })
+            ->when($categoryId, function ($q) use ($categoryId) {
+                $q->whereHas('product', function ($pq) use ($categoryId) {
+                    $pq->where('category_id', $categoryId);
+                });
+            })
+            ->with(['product.category'])
+            ->groupBy('product_id')
+            ->orderByDesc('total_qty')
+            ->orderByDesc('total_revenue')
+            ->limit(10)
+            ->get();
+
         $pdf = Pdf::loadView('reports.pdf', [
             'totalPenjualan' => $filteredQuery->sum('total'),
             'jumlahTransaksi' => $filteredQuery->count(),
             'transactions' => $filteredQuery->latest()->limit(50)->get(),
+            'bestSellingProducts' => $bestSellingProducts,
             'from' => $from->toDateString(),
             'to' => $to->toDateString(),
         ]);
