@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Exports\SalesReportExport;
 use App\Jobs\ProcessProductImport;
 use App\Models\Transaction;
+use App\Models\ImportError;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +25,6 @@ class ReportController extends Controller
         $categoryId = $request->input('category_id'); 
         
         $query = $this->filteredQuery($from, $to, $categoryId);
-
         $categories = Category::all(); 
 
         return view('reports.index', [
@@ -60,9 +60,10 @@ class ReportController extends Controller
     public function exportExcel(Request $request): BinaryFileResponse
     {
         [$from, $to] = $this->resolveDateRange($request);
+        $categoryId = $request->input('category_id');
 
         return Excel::download(
-            new SalesReportExport($this->filteredQuery($from, $to)),
+            new SalesReportExport($this->filteredQuery($from, $to, $categoryId)),
             'laporan-penjualan.xlsx'
         );
     }
@@ -70,7 +71,9 @@ class ReportController extends Controller
     public function exportPdf(Request $request): Response
     {
         [$from, $to] = $this->resolveDateRange($request);
-        $filteredQuery = $this->filteredQuery($from, $to);
+        $categoryId = $request->input('category_id');
+        
+        $filteredQuery = $this->filteredQuery($from, $to, $categoryId);
 
         $pdf = Pdf::loadView('reports.pdf', [
             'totalPenjualan' => $filteredQuery->sum('total'),
@@ -85,7 +88,9 @@ class ReportController extends Controller
 
     public function importForm(): View
     {
-        return view('reports.import');
+        $importErrors = ImportError::all();
+        
+        return view('reports.import', compact('importErrors'));
     }
 
     public function import(Request $request): RedirectResponse
@@ -111,18 +116,15 @@ class ReportController extends Controller
 
     private function filteredQuery($from, $to, $categoryId = null): Builder
     {
-
         $query = Transaction::with('user')
             ->whereBetween('created_at', [$from, $to]);
 
         if ($categoryId) {
-
             $query->whereHas('details.product', function ($q) use ($categoryId) {
                 $q->where('category_id', $categoryId);
             });
         }
 
         return $query;
-        return Transaction::with('user')->whereBetween('created_at', [$from, $to]);
     }
 }
