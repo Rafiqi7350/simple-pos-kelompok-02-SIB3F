@@ -43,7 +43,14 @@ class DatabaseSeeder extends Seeder
         $productPrices = DB::table('products')->pluck('price', 'id');
         $productIds = $productPrices->keys()->all();
 
-        for ($t = 0; $t < 2500; $t++) {
+        $transactionCount = 50;
+        $bar = $this->command ? $this->command->getOutput()->createProgressBar($transactionCount) : null;
+        if ($bar) {
+            $this->command->info("Seeding {$transactionCount} demo transactions...");
+            $bar->start();
+        }
+
+        for ($t = 0; $t < $transactionCount; $t++) {
             DB::transaction(function () use ($user, $productIds, $productPrices) {
                 $itemCount = fake()->numberBetween(1, 4);
                 $total = 0;
@@ -77,6 +84,13 @@ class DatabaseSeeder extends Seeder
 
                 DB::table('transaction_details')->insert($details);
             });
+
+            $bar?->advance();
+        }
+
+        if ($bar) {
+            $bar->finish();
+            $this->command->newLine();
         }
     }
 }
