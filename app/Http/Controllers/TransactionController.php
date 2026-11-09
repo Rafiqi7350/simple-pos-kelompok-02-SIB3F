@@ -1,59 +1,73 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreTransactionRequest;
-use App\Http\Resources\TransactionResource;
 use App\Models\Product;
 use App\Models\Transaction;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreTransactionRequest;
 use App\Models\TransactionDetail;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
 {
-    public function store(StoreTransactionRequest $request)
+    public function create()
     {
-        $validated = $request->validated();
+        $products = Product::where('stock', '>', 0)->paginate(12);
 
-        $transaction = DB::transaction(function () use ($validated, $request) {
-            $transaction = Transaction::create([
-                'user_id' => $request->user()->id,
-                'total' => 0,
-            ]);
-
-            $total = 0;
-            foreach ($validated['items'] as $item) {
-                $product = Product::findOrFail($item['product_id']);
-                $subtotal = $product->price * $item['qty'];
-                $total += $subtotal;
-
-                TransactionDetail::create([
-                    'transaction_id' => $transaction->id,
-                    'product_id' => $product->id,
-                    'qty' => $item['qty'],
-                    'subtotal' => $subtotal,
-                ]);
-            }
-
-            $transaction->update(['total' => $total]);
-
-            return $transaction;
-        });
-
-        return response()->json([
-            'data' => [
-                'id' => $transaction->id,
-                'total' => $transaction->total,
-            ],
-        ], 201);
+        return view('pos.create', compact('products'));
     }
 
-    public function show(Transaction $transaction)
-    {
-        Gate::authorize('view', $transaction);
+    public function store(StoreTransactionRequest $request)
+{
+    $validated = $request->validated();
 
-        return new TransactionResource($transaction);
+    DB::transaction(function () use ($validated) {
+
+        $transaction = Transaction::create([
+            'user_id' => 1,
+            'total' => 0,
+        ]);
+
+        $total = 0;
+
+        foreach ($validated['items'] as $item) {
+
+            $product = Product::findOrFail($item['product_id']);
+
+            $subtotal = $product->price * $item['qty'];
+
+            $total += $subtotal;
+
+            TransactionDetail::create([
+                'transaction_id' => $transaction->id,
+                'product_id' => $product->id,
+                'qty' => $item['qty'],
+                'subtotal' => $subtotal,
+            ]);
+        }
+
+        $transaction->update([
+            'total' => $total
+        ]);
+    });
+
+    return redirect()
+        ->route('pos.create')
+        ->with('success', 'Transaksi berhasil disimpan.');
+}
+
+    public function index()
+    {
+        $transactions = Transaction::with('details.product', 'user')
+            ->latest()
+            ->paginate(15);
+
+        return view('transactions.index', compact('transactions'));
+    }
+
+    public function show(string $id)
+    {
+        return "Detail transaksi #{$id}";
     }
 }
