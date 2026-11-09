@@ -11,4 +11,5 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::post('/transactions', [TransactionController::class, 'store'])->middleware('idempotent');
 });
