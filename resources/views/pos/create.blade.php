@@ -1,104 +1,58 @@
 @extends('layouts.app')
 
-@section('title', 'Kasir')
+@section('title', 'Tambah Produk')
 
 @section('content')
+<div class="max-w-lg mx-auto p-6 bg-white rounded-md shadow-md mt-6">
+    <h1 class="text-lg font-semibold mb-4">Tambah Produk Baru</h1>
 
-<h1 class="text-lg font-semibold mb-4">Transaksi Kasir</h1>
+    @if ($errors->any())
+        <div class="mb-4 bg-red-50 text-red-700 p-3 rounded-md text-sm">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-{{-- Flash message sukses --}}
-@if (session('success'))
-    <div class="bg-green-50 text-green-700 p-3 rounded-md mb-4">
-        {{ session('success') }}
-    </div>
-@endif
+    <form action="{{ route('products.store') }}" method="POST">
+        @csrf
 
-@if ($errors->any())
-    <div class="bg-red-50 text-red-700 p-3 rounded-md mb-4">
-        <ul class="list-disc list-inside text-sm">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
+            <input type="text" name="name" value="{{ old('name') }}" required
+                class="w-full border rounded-md px-3 py-2 text-sm">
+        </div>
 
-<form
-    method="POST"
-    action="{{ route('transactions.store') }}"
-    x-data="{
-        cart: [],
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+            <select name="category_id" required class="w-full border rounded-md px-3 py-2 text-sm">
+                <option value="">Pilih Kategori</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-        addToCart(id, name, price) {
-        const existingItem = this.cart.find(item => item.id === id);
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
+            <input type="number" name="price" value="{{ old('price') }}" required
+                class="w-full border rounded-md px-3 py-2 text-sm">
+        </div>
 
-        if (existingItem) {
-            existingItem.qty++;
-        } else {
-            this.cart.push({
-                id: id,
-                name: name,
-                price: price,
-                qty: 1
-            });
-        }
-    },
-        subtotal() {
-            return this.cart.reduce(
-                (sum, item) => sum + (item.price * item.qty),
-                0
-            );
-        }
-    }">
-    @csrf
-    <div class="grid grid-cols-3 gap-4">
-        @foreach ($products as $product)
-            <div
-                class="border rounded-md p-3 cursor-pointer"
-                @click="addToCart(
-                    {{ $product->id }},
-                    '{{ $product->name }}',
-                    {{ $product->price }}
-                )">
-                <p class="font-medium">
-                    {{ $product->name }}
-                </p>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Stok</label>
+            <input type="number" name="stock" value="{{ old('stock') }}" required
+                class="w-full border rounded-md px-3 py-2 text-sm">
+        </div>
 
-                <p class="text-sm text-slate-500">
-                    Rp {{ number_format($product->price) }}
-                </p>
-                <p class="text-xs text-slate-400 mt-1">Stok: {{ $product->stock }}</p>
-            </div>
-        @endforeach
-    </div>
-    <div class="mt-4 border-t pt-3">
-        <template
-            x-for="(item, index) in cart"
-            :key="index">
-            <div>
-                <p
-                    x-text="item.name + ' - Rp ' + item.price + ' x ' + item.qty">
-                </p>
-                <input
-                    type="hidden"
-                    :name="'items[' + index + '][product_id]'"
-                    :value="item.id">
-                <input
-                    type="hidden"
-                    :name="'items[' + index + '][qty]'"
-                    :value="item.qty">
-            </div>
-        </template>
-        <p class="font-semibold mt-2">
-            Subtotal:
-            Rp
-            <span x-text="subtotal()"></span>
-        </p>
-        <button
-            type="submit"
-            class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md"
-        > Bayar
-        </button>
-    </div>
-</form>
+        <div class="flex justify-end gap-2">
+            <a href="{{ route('products.index') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md text-sm">Batal</a>
+            <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-md text-sm">Simpan</button>
+        </div>
+    </form>
+</div>
 @endsection
