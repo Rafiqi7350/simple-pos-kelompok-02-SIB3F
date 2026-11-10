@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\QuickCategoryController;
 use App\Http\Controllers\ReportController;
@@ -27,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 
     Route::middleware('role:admin')->group(function () {
-        Route::resource('categories', CategoryController::class)->except('show');
+        Route::get('/categories', fn () => redirect()->route('quick-categories.index'))->name('categories.index');
         Route::resource('products', ProductController::class)->except(['show', 'destroy']);
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export/csv', [ReportController::class, 'exportCsv'])->name('reports.export.csv');
