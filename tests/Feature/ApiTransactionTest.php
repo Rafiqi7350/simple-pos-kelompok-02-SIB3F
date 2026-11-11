@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class ApiTransactionTest extends TestCase
@@ -131,5 +132,33 @@ class ApiTransactionTest extends TestCase
         ]);
 
         $response->assertStatus(403);
+    }
+    public function test_token_yang_sudah_kedaluwarsa_menghasilkan_status_401(): void
+    {
+        Carbon::setTestNow('2025-01-01 12:00:00');
+
+        try {
+            $token = $this->kasir->createToken(
+                'test',
+                ['transactions:create'],
+                now()->addMinutes(30)
+            )->plainTextToken;
+
+            Carbon::setTestNow(now()->addMinutes(31));
+
+            $response = $this->withHeaders([
+                'Authorization' => "Bearer {$token}",
+                'Idempotency-Key' => 'test-key-expired',
+                'Accept' => 'application/json',
+            ])->postJson('/api/v1/transactions', [
+                'items' => [
+                    ['product_id' => $this->product->id, 'qty' => 1],
+                ],
+            ]);
+
+            $response->assertStatus(401);
+        } finally {
+            Carbon::setTestNow();
+        }
     }
 }
