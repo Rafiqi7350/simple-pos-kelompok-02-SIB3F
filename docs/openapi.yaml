@@ -2,6 +2,28 @@ openapi: 3.0.0
 info:
   title: Simple POS API
   version: 1.0.0
+
+# ==============================================================================
+# Catatan Perbandingan Pengujian API: Postman/Insomnia vs cURL
+# ==============================================================================
+# Pengujian ketiga endpoint Simple POS API menggunakan antarmuka grafis seperti
+# Postman atau Insomnia menawarkan pengalaman pengembang (developer experience)
+# yang jauh lebih unggul, efisien, dan ramah pengguna dibandingkan eksekusi
+# perintah cURL di terminal. Melalui Graphical User Interface (GUI), pengisian
+# parameter, header seperti Idempotency-Key, otentikasi Bearer Token, serta payload
+# JSON dapat dilakukan secara visual tanpa hambatan escape karakter atau kerumitan
+# sintaks command-line. Fitur visualisasi respons dengan format JSON yang
+# terstruktur, rapi (pretty-print), dan dilengkapi penyorotan sintaks (syntax
+# highlighting) beserta status kode HTTP berwarna sangat memudahkan inspeksi
+# payload dan analisis data secara langsung. Ditambah lagi, kehadiran manajemen
+# Environment Variables memfasilitasi otomatisasi alur kerja antar-endpoint—seperti
+# penyimpanan otomatis token dari respons login ke dalam variabel global untuk
+# langsung dikonsumsi oleh request produk dan transaksi—serta tersedianya tab riwayat
+# (history) dan console logging yang menjadikan proses pelacakan kesalahan
+# (debugging) jauh lebih cepat, terorganisir, dan minim risiko kesalahan manusia
+# (human error).
+# ==============================================================================
+
 paths:
   /api/v1/login:
     post:
