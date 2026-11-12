@@ -50,7 +50,7 @@ class ApiTransactionTest extends TestCase
             'Authorization' => "Bearer {$token}",
             'Idempotency-Key' => 'test-key-1',
             'Accept' => 'application/json',
-        ])->postJson('/api/transactions', [
+        ])->postJson('/api/v1/transactions', [
             'items' => [
                 ['product_id' => $this->product->id, 'qty' => 2],
             ],
@@ -68,7 +68,7 @@ class ApiTransactionTest extends TestCase
             'Authorization' => "Bearer {$token}",
             'Idempotency-Key' => 'test-key-invalid',
             'Accept' => 'application/json',
-        ])->postJson('/api/transactions', [
+        ])->postJson('/api/v1/transactions', [
             'items' => [
                 ['product_id' => 99999, 'qty' => 1],
             ],
@@ -84,7 +84,7 @@ class ApiTransactionTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => "Bearer {$token}",
             'Accept' => 'application/json',
-        ])->postJson('/api/transactions', [
+        ])->postJson('/api/v1/transactions', [
             'items' => [
                 ['product_id' => $this->product->id, 'qty' => 1],
             ],
@@ -108,8 +108,8 @@ class ApiTransactionTest extends TestCase
             ],
         ];
 
-        $res1 = $this->withHeaders($headers)->postJson('/api/transactions', $payload);
-        $res2 = $this->withHeaders($headers)->postJson('/api/transactions', $payload);
+        $res1 = $this->withHeaders($headers)->postJson('/api/v1/transactions', $payload);
+        $res2 = $this->withHeaders($headers)->postJson('/api/v1/transactions', $payload);
 
         $res1->assertStatus(201);
         $res2->assertStatus(201)
@@ -125,7 +125,7 @@ class ApiTransactionTest extends TestCase
             'Authorization' => "Bearer {$token}",
             'Idempotency-Key' => 'test-key-no-ability',
             'Accept' => 'application/json',
-        ])->postJson('/api/transactions', [
+        ])->postJson('/api/v1/transactions', [
             'items' => [
                 ['product_id' => $this->product->id, 'qty' => 1],
             ],

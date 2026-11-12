@@ -12,8 +12,11 @@ class IdempotencyKey extends Model
     use HasFactory, Prunable;
 
     protected $fillable = [
+        'user_id',
         'key',
-
+        'request_hash',
+        'response_status',
+        'response_body',
     ];
 
     public function prunable(): Builder
