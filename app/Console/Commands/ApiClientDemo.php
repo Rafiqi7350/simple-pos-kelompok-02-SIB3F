@@ -21,13 +21,24 @@ class ApiClientDemo extends Command
         $when = fn ($e) => $e instanceof ConnectionException || in_array($e->response->status(), [429, 502, 503, 504]);
         $backoff = fn (int $attempt) => $attempt * 1000;
 
-        $login = Http::acceptJson()->post("{$apiUrl}/login", [
-            'email' => 'kasir@pos.test',
-            'password' => 'password',
-        ]);
+        // Langkah 1: Simulasi login dengan kata sandi yang salah secara sengaja
+        $this->info('--- Langkah 1: Pengujian Login dengan Kata Sandi Salah ---');
 
+        try {
+            $login = Http::acceptJson()->post("{$apiUrl}/login", [
+                'email' => 'kasir@pos.test',
+                'password' => 'kata-sandi-salah', // Password salah secara sengaja
+            ]);
+        } catch (ConnectionException $e) {
+            $this->error("Gagal terhubung ke API server di {$baseUrl}. Pastikan 'php artisan serve' sedang berjalan.");
+            return self::FAILURE;
+        }
+
+        // Tangkap respons kegagalan dari percobaan login
         if ($login->failed()) {
-            $this->error('Login gagal: ' . $login->json('message'));
+            $this->warn("Uji coba login gagal sesuai harapan (HTTP Status: {$login->status()}).");
+            $this->line("Pesan respons API: " . ($login->json('message') ?? 'Tidak ada pesan error.'));
+            $this->error('Menghentikan demo pada langkah pertama. Proses tidak dilanjutkan ke langkah berikutnya untuk menghindari penggunaan token kosong.');
             return self::FAILURE;
         }
 
